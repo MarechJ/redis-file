@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 import redis
+from Exception import IOError
 
 class RedisFile(object):
 
-  def __init__(self, redis_key, redis_connection=None, auto_del=False):
+  def __init__(self, redis_key, redis_connection=None, auto_del=False, mode='a'):
         # Force self.buf to be a string or unicode
         self.buf = None
         self.len = 0
@@ -12,6 +13,7 @@ class RedisFile(object):
         self.closed = False
         self.softspace = 0
         self.auto_del = auto_del
+        self.read_only = False
         # You can passin an existing redis connection for
         # connection pooling.
         if redis_connection:
@@ -20,9 +22,18 @@ class RedisFile(object):
             self.redis = redis.StrictRedis()
         self.redis_key = redis_key
 
+        if mode == 'w' and self.redis.exists(self.redis_key):
+          self.redis.delete(self.redis_key)
+        elif mode == 'r':
+          self.read_only = True
+
   def _complain_ifclosed(self):
         if self.closed:
             raise ValueError, "I/O operation on closed file"
+
+  def __check_perm(self):
+    if self.read_only:
+      raise IOError('File not open for writing')
 
   def isatty(self):
         self._complain_ifclosed()
@@ -34,10 +45,12 @@ class RedisFile(object):
 
   def write(self, s):
         self._complain_ifclosed()
+        self.__check_perm()
         self.redis.rpush(self.redis_key, s)
 
   def writelines(self, s):
         self._complain_ifclosed()
+        self.__check_perm()
         if isinstance(s, str):
             s = s.split('\n')
         self.redis.rpush(self.redis_key, *s)
