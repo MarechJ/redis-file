@@ -3,7 +3,7 @@ import redis
 
 class RedisFile(object):
 
-  def __init__(self, redis_key, redis_connection=None):
+  def __init__(self, redis_key, redis_connection=None, auto_del=False):
         # Force self.buf to be a string or unicode
         self.buf = None
         self.len = 0
@@ -11,7 +11,8 @@ class RedisFile(object):
         self.pos = 0
         self.closed = False
         self.softspace = 0
-        # You can passin an existing redis connection for 
+        self.auto_del = auto_del
+        # You can passin an existing redis connection for
         # connection pooling.
         if redis_connection:
             self.redis = redis_connection
@@ -30,7 +31,6 @@ class RedisFile(object):
   def flush(self):
         self._complain_ifclosed()
         pass
-
 
   def write(self, s):
         self._complain_ifclosed()
@@ -73,12 +73,13 @@ class RedisFile(object):
         self.pos = s
 
   def close(self):
-        self.redis.delete(self.redis_key)
-        self.closed = True
+    if self.auto_del:
+      self.redis.delete(self.redis_key)
+    self.closed = True
 
   def __str__(self):
         return "%s" % self.__dict__
-        
+
 
 if __name__ == '__main__':
     f = RedisFile("file")
