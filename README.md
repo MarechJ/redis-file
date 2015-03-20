@@ -38,4 +38,4 @@ Installation
 
 Installation is simple too::
 
-    $ pip install redis-file
+    $ python setup.py install
