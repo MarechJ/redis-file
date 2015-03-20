@@ -1,3 +1,8 @@
+Credit goes to @daniellawrence
+==============================
+
+I just added a parameter not to delete the key
+
 redis-file
 ==========
 
