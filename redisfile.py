@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import redis
-from Exception import IOError
+
 
 class RedisFile(object):
 
@@ -81,6 +81,7 @@ class RedisFile(object):
         self.pos += len(data)
         return data
 
+  # This one should be the offest of the characters not the array index
   def seek(self, s):
         self._complain_ifclosed()
         self.pos = s
