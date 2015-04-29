@@ -1,7 +1,9 @@
 Credit goes to @daniellawrence
 ==============================
 
-I just added a parameter not to delete the key
+I just added a parameter not to delete the key, and 'w', 'a', 'r' modes.
+There's still some improvements to be done to match the file interface.
+
 
 redis-file
 ==========
