@@ -14,7 +14,7 @@ class RedisFile(object):
         self.softspace = 0
         self.auto_del = auto_del
         self.read_only = False
-        # You can passin an existing redis connection for
+        # You can pass an existing redis connection for
         # connection pooling.
         if redis_connection:
             self.redis = redis_connection
